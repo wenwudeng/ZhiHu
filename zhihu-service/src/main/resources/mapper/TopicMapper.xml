@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.demo.mapper.TopicMapper">
+  <resultMap id="BaseResultMap" type="com.demo.entity.Topic">
+    <id column="topic_id" jdbcType="VARCHAR" property="topicId" />
+    <result column="parent_id" jdbcType="VARCHAR" property="parentId" />
+    <result column="topic_name" jdbcType="VARCHAR" property="topicName" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    topic_id, parent_id, topic_name
+  </sql>
+  <select id="getTopic" parameterType="java.lang.String" resultType="java.util.HashMap">
+    SELECT topic.*
+			FROM `topic`
+			WHERE topic.topic_name=#{name}
+  </select>
+  <insert id="setTopic" parameterType="com.demo.entity.Topic">
+    INSERT INTO `topic` (topic_id,topic_name)
+												VALUES
+												(#{topicId},#{topicName});
+  </insert>
+    <select id="getAllTopic" resultType="java.util.HashMap">
+      SELECT DISTINCT
+            topic.topic_name
+            FROM
+            topic
+    </select>
+</mapper>

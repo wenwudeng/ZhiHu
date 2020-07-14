@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.demo.mapper.AnswerMapper">
+  <resultMap id="BaseResultMap" type="com.demo.entity.Answer">
+    <id column="answer_id" jdbcType="VARCHAR" property="answerId" />
+    <result column="user_id" jdbcType="VARCHAR" property="userId" />
+    <result column="ques_id" jdbcType="VARCHAR" property="quesId" />
+    <result column="answer_content" jdbcType="VARCHAR" property="answerContent" />
+    <result column="anonymity" jdbcType="CHAR" property="anonymity" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    answer_id, user_id, ques_id, answer_content, anonymity, create_time
+  </sql>
+  <select id="getAnswer" parameterType="java.lang.String" resultType="java.util.HashMap">
+    SELECT account.name as aname, account.portrait as portrait,answer.* FROM account,answer
+     WHERE ques_id=#{id} and answer.user_id=account.user_id
+  </select>
+  <select id="getAnswerCount" parameterType="java.lang.String" resultType="java.lang.Integer">
+      SELECT COUNT(*)
+          FROM answer
+          WHERE answer.user_id=#{id}
+  </select>
+  <select id="getByQuesIdAnswerCount" parameterType="java.lang.String" resultType="java.lang.Integer">
+     SELECT COUNT(*)
+        FROM answer
+          WHERE answer.ques_id=#{id}
+  </select>
+    <insert id="setAnswer" parameterType="com.demo.entity.Answer">
+        INSERT INTO `answer`(answer_id,user_id,ques_id,answer_content,anonymity,create_time)
+												VALUES
+												(#{answerId},#{userId},
+												#{quesId},#{answerContent},#{anonymity},#{createTime});
+    </insert>
+    <select id="getUserAnswer" parameterType="java.lang.String" resultType="java.util.HashMap">
+        SELECT
+            answer.user_id,
+            answer.answer_id,
+            answer.ques_id,
+            ques.ques_name,
+            account.`name`,
+            answer.create_time,
+            answer.answer_content
+            FROM
+            answer
+            INNER JOIN ques ON answer.ques_id = ques.ques_id
+            INNER JOIN account ON answer.user_id = account.user_id
+            WHERE answer.user_id=#{id}
+    </select>
+    <update id="updataEndorsNum" parameterType="com.demo.entity.Endorse">
+    update answer
+    set endorse_number = (SELECT COUNT(*) FROM proandcon WHERE answer_id=#{answerId} AND agr_opp=1),
+		create_time=#{createTime}
+    where answer.answer_id=#{answerId}
+  </update>
+    <select id="getQuesHotAnswer" parameterType="java.lang.String" resultType="java.util.HashMap">
+        SELECT answer.*
+            FROM `answer`
+            WHERE answer.ques_id=#{id}
+            ORDER BY  answer.endorse_number DESC
+            LIMIT 1;
+    </select>
+</mapper>

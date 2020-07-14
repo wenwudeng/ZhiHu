@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.demo.mapper.CommentMapper">
+  <resultMap id="BaseResultMap" type="com.demo.entity.Comment">
+    <id column="comment_id" jdbcType="VARCHAR" property="commentId" />
+    <result column="comment_object_id" jdbcType="VARCHAR" property="commentObjectId" />
+    <result column="object_type" jdbcType="CHAR" property="objectType" />
+    <result column="user_id" jdbcType="VARCHAR" property="userId" />
+    <result column="comment_content" jdbcType="VARCHAR" property="commentContent" />
+    <result column="praise_number" jdbcType="INTEGER" property="praiseNumber" />
+    <result column="step_on_number" jdbcType="INTEGER" property="stepOnNumber" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <association property="user" javaType="com.demo.entity.User">
+      <id column="user_id" jdbcType="VARCHAR" property="userId" />
+      <result column="emali" jdbcType="VARCHAR" property="emali" />
+      <result column="phone" jdbcType="VARCHAR" property="phone" />
+      <result column="name" jdbcType="VARCHAR" property="name" />
+      <result column="password" jdbcType="VARCHAR" property="password" />
+      <result column="gender" jdbcType="CHAR" property="gender" />
+      <result column="praise_number" jdbcType="INTEGER" property="praiseNumber" />
+      <result column="thank_number" jdbcType="INTEGER" property="thankNumber" />
+      <result column="question_number" jdbcType="INTEGER" property="questionNumber" />
+      <result column="answer_number" jdbcType="INTEGER" property="answerNumber" />
+      <result column="collect_number" jdbcType="INTEGER" property="collectNumber" />
+      <result column="edit_number" jdbcType="INTEGER" property="editNumber" />
+      <result column="attention_number" jdbcType="INTEGER" property="attentionNumber" />
+      <result column="follower_number" jdbcType="INTEGER" property="followerNumber" />
+      <result column="concern_topic_number" jdbcType="INTEGER" property="concernTopicNumber" />
+      <result column="forbidden" jdbcType="CHAR" property="forbidden" />
+      <result column="forbidden_time" jdbcType="TIMESTAMP" property="forbiddenTime" />
+      <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    </association>
+  </resultMap>
+  <select id="seleseByQues" parameterType="java.lang.String" resultMap="BaseResultMap">
+      SELECT comment.*
+      FROM comment
+      WHERE comment_object_id=#{id}
+      ORDER BY praise_number DESC
+  </select>
+
+  <select id="findComment" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select *
+    from comment
+    where comment_id=#{id}
+  </select>
+
+  <insert id="addComment" parameterType="com.demo.entity.Comment">
+    insert into comment
+    (comment_id,comment_object_id,object_type,user_id,
+        comment_content,praise_number,step_on_number,create_time)
+    values(#{commentId},#{commentObjectId},#{objectType},#{userId},#{commentContent},#{praiseNumber},#{stepOnNumber},#{createTime})
+  </insert>
+  <!--根据回答的id来获取评论-->
+  <select id="selectByAnswerId" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select * from comment where comment_object_id=#{id} and object_type=2
+  </select>
+</mapper>

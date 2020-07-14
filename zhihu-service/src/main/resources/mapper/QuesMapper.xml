@@ -1,0 +1,105 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.demo.mapper.QuesMapper">
+  <resultMap id="BaseResultMap" type="com.demo.entity.Ques">
+    <id column="ques_id" jdbcType="VARCHAR" property="quesId" />
+    <result column="ques_name" jdbcType="VARCHAR" property="quesName" />
+    <result column="ques_describe" jdbcType="VARCHAR" property="quesDescribe" />
+    <result column="photo" jdbcType="VARCHAR" property="photo" />
+    <result column="answer_number" jdbcType="INTEGER" property="answerNumber" />
+    <result column="attention_number" jdbcType="INTEGER" property="attentionNumber"/>
+    <result column="endorse_number" jdbcType="INTEGER" property="endorseNumber" />
+    <result column="browse_number" jdbcType="INTEGER" property="browseNumber" />
+    <result column="anonymity" jdbcType="INTEGER" property="anonymity" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    ques_id, ques_name, ques_describe, photo, answer_number, attention_number, browse_number, 
+    anonymity, create_time
+  </sql>
+  <select id="selectAllQues" resultType="java.util.HashMap">
+    select q.*
+        from ques q
+        ORDER BY create_time DESC
+  </select>
+  <select id="getQues" parameterType="java.lang.String" resultType="java.util.HashMap">
+      SELECT ques.*
+	  FROM `ques`
+	  WHERE ques.ques_id=#{id}
+  </select>
+  <insert id="setQues" parameterType="com.demo.entity.request.QuesRequest">
+      INSERT INTO `ques`(ques_id,user_id,ques_name,ques_describe,anonymity,create_time)
+			VALUES
+			(#{quesId},#{userId},#{ques_name},#{quesDescribe},
+			#{anonymity},#{createTime});
+  </insert>
+  <!--获取某个用户的提问总数-->
+  <select id="getQuesCount" parameterType="java.lang.String" resultType="java.lang.Integer">
+      SELECT COUNT(*)
+FROM ques
+WHERE ques.user_id=#{id}
+  </select>
+  <select id="getHotQues" parameterType="java.lang.String" resultType="java.util.HashMap">
+    SELECT
+      ques.ques_id,
+        ques.ques_name,
+        ques.ques_describe,
+        ques.answer_number,
+        ques.attention_number,
+        ques.comment_number,
+        ques.browse_number,
+        ques.anonymity,
+        ques.create_time,
+        ques.photo
+      FROM
+      `topic-question`
+      INNER JOIN ques ON `topic-question`.ques_id = ques.ques_id
+      WHERE
+      `topic-question`.topic_name = #{name}
+  </select>
+  <update id="updataQuesBrowseNumber" parameterType="com.demo.entity.request.UpdataAttentionCount">
+        update ques
+            set ques.browse_number=#{count}
+            where ques.ques_id=#{quesId}
+    </update>
+  <!-- 更新问题的评论数 -->
+  <update id="addCommentCountOfQuestion" parameterType="String">
+        update ques
+        set comment_number=comment_number+1
+        where ques_id=#{ques_id}
+      </update>
+    <select id="getAllQues" resultType="java.util.HashMap">
+        select q.*
+        from ques q
+    </select>
+    <select id="getBackstageQues" resultType="java.util.HashMap">
+        SELECT
+            ques.ques_id,
+            account.`name`,
+            account.user_id,
+            ques.ques_name,
+            ques.ques_describe,
+            ques.create_time,
+            ques.anonymity
+            FROM
+            ques
+            INNER JOIN account ON ques.user_id = account.user_id
+    </select>
+    <delete id="deleteQues" parameterType="java.lang.String">
+        delete from ques
+            where ques.ques_id=#{id}
+    </delete>
+    <select id="searchQues" parameterType="java.lang.String" resultType="java.util.HashMap">
+         select
+          ques.ques_id,
+            account.`name`,
+            account.user_id,
+            ques.ques_name,
+            ques.ques_describe,
+            ques.create_time,
+            ques.anonymity
+        from ques
+        INNER JOIN account ON ques.user_id = account.user_id
+        where ques.ques_name like CONCAT(CONCAT('%',#{content}),'%');
+    </select>
+</mapper>

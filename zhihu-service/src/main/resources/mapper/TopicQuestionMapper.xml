@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.demo.mapper.TopicQuestionMapper">
+  <resultMap id="BaseResultMap" type="com.demo.entity.TopicQuestion">
+    <id column="topic_name" jdbcType="VARCHAR" property="topicName" />
+    <id column="ques_id" jdbcType="VARCHAR" property="quesId" />
+  </resultMap>
+  <insert id="insertRelation" parameterType="com.demo.entity.TopicQuestion">
+    INSERT INTO `topic-question` (topic_name,ques_id)
+												VALUES
+												(#{topicName},#{quesId});
+  </insert>
+    <select id="getHotTopic" resultType="java.util.HashMap">
+        SELECT `topic-question`.topic_name as topic,COUNT(*) as count
+            FROM `topic-question`
+            GROUP BY `topic-question`.topic_name
+            ORDER BY  count DESC
+            LIMIT 5;
+    </select>
+    <!--//根据问题的id来查询其所属的话题-->
+    <select id="getTopicByQuesId" parameterType="java.lang.String" resultType="java.util.Map">
+        select * from `topic-question` where ques_id=#{id}
+    </select>
+</mapper>

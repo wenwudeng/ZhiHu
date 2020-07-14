@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.demo.mapper.FavoritesMapper">
+  <sql id="Base_Column_List">
+    favorites_id, user_id, favorites_name, open, craeda_time, favorites_describe
+  </sql>
+  <insert id="setFavorites" parameterType="com.demo.entity.Favorites">
+      INSERT INTO favorites (favorites_id,user_id,favorites_name,favorites_describe,open,create_time)
+					VALUES
+					(#{favoritesId},#{userId},
+					#{favoritesName},#{favoritesDescribe},#{open},#{createTime});
+  </insert>
+    <delete id="deleteFavorites" parameterType="java.lang.String">
+        delete from favorites where favorites.favorites_id=#{favoritesId}
+    </delete>
+    <select id="getUserFavorites" parameterType="java.lang.String" resultType="java.util.HashMap">
+        SELECT favorites.*
+			FROM `favorites`
+			WHERE favorites.user_id=#{id}
+    </select>
+</mapper>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.demo.mapper.EndorseMapper">
+  <resultMap id="BaseResultMap" type="com.demo.entity.Endorse">
+    <id column="user_id" jdbcType="VARCHAR" property="userId" />
+    <result column="answer_id" jdbcType="VARCHAR" property="answerId" />
+    <result column="agr_opp" jdbcType="INTEGER" property="agrOpp" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+  </resultMap>
+  <select id="getEndorse" parameterType="java.lang.String" resultMap="BaseResultMap">
+    SELECT *
+      FROM  proandcon
+      WHERE user_id=#{id} AND
+  </select>
+  <insert id="setEndorse" parameterType="com.demo.entity.Endorse">
+    INSERT INTO `proandcon`(user_id,answer_id,agr_opp,create_time)
+												VALUES
+												(#{userId},#{answerId},#{agrOpp},#{createTime});
+  </insert>
+  <update id="updataEndorse" parameterType="com.demo.entity.Endorse">
+    update proandcon
+    set agr_opp = #{agrOpp},
+    create_time=#{createTime}
+    where user_id=#{userId} AND answer_id=#{answerId}
+  </update>
+  <delete id="deleteAttitude" parameterType="com.demo.entity.Endorse">
+    delete from proandcon
+where proandcon.user_id=#{userId}
+AND proandcon.answer_id=#{answerId}
+  </delete>
+  <select id="getUserEndorse" parameterType="com.demo.entity.Endorse" resultType="java.util.HashMap">
+      SELECT proandcon.*
+			FROM `proandcon`
+			WHERE proandcon.user_id=#{userId} AND proandcon.answer_id=#{answerId}
+  </select>
+  <select id="getOpposeCount" parameterType="java.lang.String" resultType="java.lang.Integer">
+      SELECT
+        Count(proandcon.agr_opp)
+        FROM
+        proandcon
+        WHERE
+        proandcon.answer_id=#{id}
+         AND proandcon.agr_opp=0
+
+  </select>
+</mapper>

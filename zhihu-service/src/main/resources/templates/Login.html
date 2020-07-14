@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>登陆页面</title>
+    <link href="webjars/bootstrap/4.3.1/css/bootstrap.css" rel="stylesheet"/>
+    <link href="webjars/font-awesome/4.7.0/css/font-awesome.css" rel="stylesheet"/>
+    <link charset="utf-8" href="css/style.css" rel="stylesheet" type="text/css"/>
+</head>
+<body>
+<div class="box">
+    <div align="left" class="cnt">
+        <p><span id="cnt_one">欢迎登录</span></p>
+        <div class="btn-group btn-group-lg cnt_two">
+            <button class="btn btn-default" type="button">Button 1</button>
+            <button class="btn btn-default" type="button">Button 2</button>
+            <button class="btn btn-default" type="button">Button 3</button>
+        </div>
+        <hr style="margin-top: 0px;">
+        <div>
+            <form class="bs-example bs-example-form" role="form">
+                <div class="form-group has-feedback login-yonghu-input">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="basic-username"><i class="fa fa-lg fa-user"></i></span>
+                        </div>
+                        <input class="form-control" id="username" maxlength="10" placeholder="请输入您的账号" type="text">
+                    </div>
+                </div>
+                <div class="form-group has-feedback login-yonghu-input">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="basic-password"><i class="fa fa-lg fa-lock"></i></span>
+                        </div>
+                        <input class="form-control" id="password" maxlength="10" placeholder="请输入密码" type="password">
+                    </div>
+                </div>
+                <div class="input-group has-feedback  login-yonghu-input">
+                    <div class="input-group">
+                        <input class="form-control" id="verification" placeholder="请输入验证码" type="text">
+                    </div>
+                </div>
+                <div style="margin-top:10px;">
+                    <input class="form-control btn btn-info" id="login" type="button" value="登录预约体检"/>
+                </div>
+            </form>
+        </div>
+
+    </div>
+</div>
+<script src="webjars/jquery/3.3.1-2/jquery.min.js"></script>
+<script src="webjars/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+<script type="text/javascript">
+    $('#login').click(function () {
+        var params = {
+            username: $('#username').val(),
+            password: $('#password').val()
+        };
+        $.ajax({
+            type: 'POST',
+            url: '/checkLogin',
+            contentType: 'application/json',
+            data: JSON.stringify(params),
+            success: function (result) {
+                console.log("successful");
+                console.log(result);
+                if (result === "/getLogin") {
+                    alert("error");
+                } else {
+                    window.location.href = result;
+                }
+            },
+            error: function () {
+                console.log("error");
+            }
+        })
+    })
+</script>
+</body>
+</html>

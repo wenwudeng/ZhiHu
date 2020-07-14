@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.demo.mapper.UserMapper">
+  <resultMap id="BaseResultMap" type="com.demo.entity.User">
+    <id column="user_id" jdbcType="VARCHAR" property="userId" />
+    <result column="emali" jdbcType="VARCHAR" property="emali" />
+    <result column="phone" jdbcType="VARCHAR" property="phone" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="password" jdbcType="VARCHAR" property="password" />
+    <result column="gender" jdbcType="CHAR" property="gender" />
+    <result column="praise_number" jdbcType="INTEGER" property="praiseNumber" />
+    <result column="thank_number" jdbcType="INTEGER" property="thankNumber" />
+    <result column="question_number" jdbcType="INTEGER" property="questionNumber" />
+    <result column="answer_number" jdbcType="INTEGER" property="answerNumber" />
+    <result column="collect_number" jdbcType="INTEGER" property="collectNumber" />
+    <result column="edit_number" jdbcType="INTEGER" property="editNumber" />
+    <result column="attention_number" jdbcType="INTEGER" property="attentionNumber" />
+    <result column="follower_number" jdbcType="INTEGER" property="followerNumber" />
+    <result column="concern_topic_number" jdbcType="INTEGER" property="concernTopicNumber" />
+    <result column="forbidden" jdbcType="CHAR" property="forbidden" />
+    <result column="forbidden_time" jdbcType="TIMESTAMP" property="forbiddenTime" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+  </resultMap>
+  <select id="LoginByPhone" parameterType="java.lang.String" resultType="java.util.HashMap">
+      		SELECT *
+			FROM account
+			WHERE account.phone=#{Account}
+  </select>
+  <select id="LoginByEmali" parameterType="java.lang.String" resultType="java.util.HashMap">
+      		SELECT *
+			FROM account
+			WHERE account.emali=#{Account}
+  </select>
+    <insert id="RegisterByPhone" parameterType="com.demo.entity.request.LoginRequest">
+      INSERT INTO `account`(user_id,phone,password,create_time)
+												VALUES
+												(#{userId},#{phone},#{password},#{createTime});
+    </insert>
+    <insert id="setUserPortrait" parameterType="java.lang.String">
+        update account
+            set `account`.portrait=#{portrait}
+		WHERE account.user_id=#{userId}
+    </insert>
+    <!-- 根据用户ID来查询用户 -->
+    <select id="getUserById" parameterType="java.lang.String" resultType="java.util.Map">
+    select * from account where user_id=#{id}
+    </select>
+    <select id="getAllUser" resultType="java.util.HashMap">
+        SELECT
+            account.user_id,
+            account.`name`,
+            account.create_time,
+            account.forbidden_time,
+            account.forbidden
+            FROM
+            account
+    </select>
+    <update id="prohibitUser" parameterType="com.demo.entity.User">
+        update account
+            set account.forbidden = 1,
+                account.forbidden_time=#{forbiddenTime}
+            where user_id=#{userId}
+    </update>
+    <update id="unsealingUser" parameterType="java.lang.String">
+        update account
+          set account.forbidden=0,
+                account.forbidden_time=NULL
+		WHERE user_id =#{userId}
+    </update>
+    <select id="searchUser" parameterType="java.lang.String" resultType="java.util.HashMap">
+        select  account.user_id,
+            account.`name`,
+            account.create_time,
+            account.forbidden_time,
+            account.forbidden
+        from account where account.name like CONCAT(CONCAT('%',#{content}),'%');
+    </select>
+</mapper>

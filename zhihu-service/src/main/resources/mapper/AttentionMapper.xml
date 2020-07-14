@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.demo.mapper.AttentionMapper">
+    <resultMap id="BaseResultMap" type="com.demo.entity.Attention">
+        <result column="user_id" jdbcType="VARCHAR" property="userId" />
+        <result column="Focus_id" jdbcType="VARCHAR" property="focusId" />
+        <result column="focus_type" jdbcType="INTEGER" property="focusType" />
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    </resultMap>
+    <!--查询我关注的人-->
+    <select id="getMyConcern" parameterType="java.lang.String" resultType="java.util.HashMap">
+   SELECT attention.*,account.name
+			FROM `attention`
+			left join account on attention.Focus_id=account.user_id
+			WHERE attention.user_id=#{id} AND attention.focus_type=1
+  </select>
+    <select id="getFansCount" parameterType="java.lang.String" resultType="java.lang.Integer">
+        		SELECT COUNT(*)
+			FROM `attention`
+			WHERE attention.Focus_id=#{id} AND attention.focus_type=1
+  </select>
+    <select id="getAttentionQues" parameterType="java.lang.String" resultType="java.util.HashMap">
+      SELECT
+        attention.Focus_id,
+        ques.ques_id,
+        ques.ques_name,
+        ques.create_time
+        FROM
+        ques
+        INNER JOIN attention ON attention.Focus_id = ques.ques_id
+        WHERE attention.user_id=#{id} AND attention.focus_type=3
+  </select>
+    <select id="getAttentionQuesFansCount" parameterType="java.lang.String" resultType="java.lang.Integer">
+      SELECT COUNT(*)
+FROM attention
+WHERE attention.Focus_id=#{id} AND attention.focus_type=3
+   </select>
+    <insert id="setAttentionQues" parameterType="com.demo.entity.Attention">
+      INSERT INTO attention (user_id,Focus_id,focus_type,create_time)
+												VALUES
+												(#{userId},#{focusId},#{focusType},#{createTime});
+    </insert>
+    <delete id="deleteAttentionQues"  parameterType="com.demo.entity.Attention">
+      delete
+       from attention
+            where attention.user_id=#{userId}
+            AND attention.Focus_id=#{focusId}
+            AND attention.focus_type=#{focusType};
+    </delete>
+    <update id="updataQuesAttentionCount" parameterType="com.demo.entity.request.UpdataAttentionCount">
+        update ques
+            set ques.attention_number=#{count}
+            where ques.ques_id=#{quesId}
+    </update>
+    <!--获取当前用户对某个用户的关注态度 -->
+    <select id="getAttentionWithOtherUser" parameterType="map" resultType="java.util.Map">
+    select * from attention
+    where user_id=#{userId} and focus_id=#{otherUserId} and focus_type=1
+    </select>
+    <insert id="setAttentionUser" parameterType="com.demo.entity.Attention">
+        INSERT INTO attention (user_id,Focus_id,focus_type,create_time)
+												VALUES
+												(#{userId},#{focusId},1,#{createTime})
+    </insert>
+    <delete id="deleteAttentionUser" parameterType="com.demo.entity.Attention">
+        delete from attention
+            where attention.user_id=#{userId}
+            AND attention.Focus_id=#{focusId}
+    </delete>
+
+    <!-- 获取关注了某个东西的用户的id -->
+    <select id="getUserIdByFocusId" parameterType="map" resultType="java.lang.String">
+        select user_id from attention
+        where focus_id=#{focusId} and focus_type=#{type}
+    </select>
+    <!-- 判断用户是否关注了某个东西 -->
+    <select id="isAttention" parameterType="map" resultType="java.util.Map">
+        select * from attention
+        where user_id=#{userId} and focus_id=#{focusId} and focus_type=#{type}
+    </select>
+</mapper>
